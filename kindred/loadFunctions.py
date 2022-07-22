@@ -40,7 +40,7 @@ def loadEntity(filename,line,text):
 	chunkTest = chunkTest.strip()
 	tokensTest = tokensTest.strip()
 
-	assert chunkTest == tokensTest , u"ERROR in " + filename + u"For id=" + entityID + ", tokens '" + tokens.encode('ascii', 'ignore') + "' don't match up with positions: " + str(positions)
+	assert chunkTest == tokensTest , f"ERROR in {filename} For id={entityID}, tokens {tokens} don't match up with positions: {str(positions)}"
 	
 	entity = kindred.Entity(typeName, tokensTest, positions, entityID)
 
@@ -418,26 +418,29 @@ def load(dataFormat,path,ignoreEntities=[],ignoreComplexRelations=True):
 		filenames = sorted(list(os.listdir(directory)))
 
 		for filename in filenames:
-			if dataFormat == 'standoff' and filename.endswith('.txt'):
-				absPath = os.path.join(directory, filename)
-				doc = loadDataFromStandoff(absPath,ignoreEntities=ignoreEntities)
-				corpus.addDocument(doc)
-			elif dataFormat == 'biocxml' and filename.endswith('.bioc.xml'):
-				absPath = os.path.join(directory, filename)
-				tempCorpus = loadDataFromBioC(absPath,ignoreEntities=ignoreEntities)
-				corpus.documents += tempCorpus.documents
-			elif dataFormat == 'pubannotation' and filename.endswith('.json'):
-				absPath = os.path.join(directory, filename)
-				doc = loadDataFromPubAnnotationJSON(absPath,ignoreEntities=ignoreEntities)
-				corpus.addDocument(doc)
-			elif dataFormat == 'simpletag' and filename.endswith('.simple'):
-				absPath = os.path.join(directory, filename)
-				with open(absPath,'r') as f:
-					filecontents = f.read().strip()
+			try:
+				if dataFormat == 'standoff' and filename.endswith('.txt'):
+					absPath = os.path.join(directory, filename)
+					doc = loadDataFromStandoff(absPath,ignoreEntities=ignoreEntities)
+					corpus.addDocument(doc)
+				elif dataFormat == 'biocxml' and filename.endswith('.bioc.xml'):
+					absPath = os.path.join(directory, filename)
+					tempCorpus = loadDataFromBioC(absPath,ignoreEntities=ignoreEntities)
+					corpus.documents += tempCorpus.documents
+				elif dataFormat == 'pubannotation' and filename.endswith('.json'):
+					absPath = os.path.join(directory, filename)
+					doc = loadDataFromPubAnnotationJSON(absPath,ignoreEntities=ignoreEntities)
+					corpus.addDocument(doc)
+				elif dataFormat == 'simpletag' and filename.endswith('.simple'):
+					absPath = os.path.join(directory, filename)
+					with open(absPath,'r') as f:
+						filecontents = f.read().strip()
 
-				doc = parseSimpleTag(filecontents,ignoreEntities=ignoreEntities)
-				doc.sourceFilename = filename
-				corpus.addDocument(doc)
+					doc = parseSimpleTag(filecontents,ignoreEntities=ignoreEntities)
+					doc.sourceFilename = filename
+					corpus.addDocument(doc)
+			except Exception as ex:
+				print(f"Could not load {filename} due to an exception: {ex}")
 
 		if len(corpus.documents) == 0:
 			raise RuntimeError("No documents loaded from directory (%s). Are you sure this directory contains the corpus (format: %s)" % (path,dataFormat))
