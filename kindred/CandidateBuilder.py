@@ -53,6 +53,8 @@ class CandidateBuilder:
 				entities = tuple(r.entities)
 				existingRelationsAndArgNames[entities].append((r.relationType,tuple(r.argNames)))
 
+			assert len(doc.sentences) == 1  # we assume sentence detection was performed prior to loading into kindred
+
 			for sentence in doc.sentences:
 				entitiesInSentence = [ entity for entity,tokenIndices in sentence.entityAnnotations ]
 							

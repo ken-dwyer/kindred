@@ -112,7 +112,10 @@ class Sentence:
 				paths[(a,b)] = path
 				G2.add_edge(a,b,weight=len(path))
 			except nx.exception.NetworkXNoPath:
-				sys.stderr.write("WARNING. No path found between nodes %d and %d!\n" % (a,b))
+				# Suppress this warning since some of our texts contain multiple sentences. (We used a different
+				# sentence detection that produces different results from the spaCy model/parser.)
+				# sys.stderr.write("WARNING. No path found between nodes %d and %d!\n" % (a,b))
+				pass
 			
 		# TODO: This may through an error if G2 ends up having multiple components. Catch it gracefully.
 		minTree = nx.minimum_spanning_tree(G2)

@@ -40,8 +40,11 @@ class Parser:
 
 		parsed = self.nlp(text)
 
-		for sent in parsed.sents:
-			yield sent
+		# Return the entire document as one "sentence" since we assume sentence splitting has already been performed.
+		return [parsed]
+
+		# for sent in parsed.sents:
+		# 	yield sent
 
 	def parse(self,corpus):
 		"""
