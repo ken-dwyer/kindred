@@ -23,13 +23,13 @@ class LogisticRegressionWithThreshold:
 		assert threshold >= 0 and threshold <= 1, "Threshold must be between 0 and 1"
 
 		model_params = {
-			"C": [2**n for n in range(-5, 5)],
-			"class_weight": ["balanced", None],
+			"C": [2**n for n in range(-8, 3)],
 		}
 
-		clf = LogisticRegression(random_state=1, solver='liblinear', multi_class='ovr')
-		self.clf = GridSearchCV(clf, model_params, cv=5, scoring="f1_micro")
-
+		clf = LogisticRegression(
+			class_weight=None, random_state=1, solver='sag', multi_class='multinomial', tol=1e-3
+		)
+		self.clf = GridSearchCV(clf, model_params, cv=3, scoring="f1_micro")
 		self.threshold = threshold
 
 	def fit(self,X,Y):
