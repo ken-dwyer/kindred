@@ -1,6 +1,8 @@
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+
 
 class LogisticRegressionWithThreshold:
 	"""
@@ -20,7 +22,14 @@ class LogisticRegressionWithThreshold:
 		
 		assert threshold >= 0 and threshold <= 1, "Threshold must be between 0 and 1"
 
-		self.clf = LogisticRegression(class_weight='balanced',random_state=1,solver='liblinear',multi_class='ovr')
+		model_params = {
+			"C": [2**n for n in range(-5, 5)],
+			"class_weight": ["balanced", None],
+		}
+
+		clf = LogisticRegression(random_state=1, solver='liblinear', multi_class='ovr')
+		self.clf = GridSearchCV(clf, model_params, cv=5, scoring="f1_micro")
+
 		self.threshold = threshold
 
 	def fit(self,X,Y):
@@ -46,7 +55,8 @@ class LogisticRegressionWithThreshold:
 		:rtype: matrix
 		"""
 
-		probs = self.clf.predict_proba(X)
+		# probs = self.clf.predict_proba(X)
+		probs = self.clf.best_estimator_.predict_proba(X)
 
 		# Ignore probabilities that fall below our threshold
 		probs[probs<self.threshold] = -1.0
@@ -70,5 +80,4 @@ class LogisticRegressionWithThreshold:
 		:rtype: matrix
 		"""
 
-		return self.clf.predict_proba(X)
-
+		return self.clf.best_estimator_.predict_proba(X)
