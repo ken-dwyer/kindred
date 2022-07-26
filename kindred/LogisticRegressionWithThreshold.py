@@ -27,9 +27,9 @@ class LogisticRegressionWithThreshold:
 		}
 
 		clf = LogisticRegression(
-			class_weight=None, random_state=1, solver='sag', multi_class='multinomial', tol=1e-3
+			class_weight=None, random_state=1, solver='lbfgs', multi_class='multinomial', tol=1e-3
 		)
-		self.clf = GridSearchCV(clf, model_params, cv=3, scoring="f1_micro", n_jobs=-1)
+		self.clf = GridSearchCV(clf, model_params, cv=3, scoring="f1_micro")
 		self.threshold = threshold
 
 	def fit(self,X,Y):
