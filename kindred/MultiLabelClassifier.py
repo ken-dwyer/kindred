@@ -90,3 +90,6 @@ class MultiLabelClassifier:
 
 		return np.column_stack(predictions)
 
+	def set_threshold(self, threshold):
+		for clf in self.classifiers:
+			clf.threshold = threshold
