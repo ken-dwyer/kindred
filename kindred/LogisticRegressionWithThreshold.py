@@ -23,7 +23,7 @@ class LogisticRegressionWithThreshold:
 		assert threshold >= 0 and threshold <= 1, "Threshold must be between 0 and 1"
 
 		model_params = {
-			"C": [2**n for n in range(-8, 3)],
+			"C": [0.00390625, 0.5, 4],
 		}
 
 		clf = LogisticRegression(
